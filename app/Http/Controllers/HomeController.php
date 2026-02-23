@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use App\Models\User;
 use App\Models\Doctor;
 use App\Models\Appointment;
@@ -32,12 +32,6 @@ use App\Models\Helpline;
 use App\Models\Icu;
 use App\Models\Payment;
 use App\Models\Prescription;
-
-
-use Session;
-
-
-
 
 
 class HomeController extends Controller
@@ -72,15 +66,25 @@ class HomeController extends Controller
         }
     }
     public function appointment(Request $req){
+        $validated = $req->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255'],
+            'date' => ['required', 'date'],
+            'phone' => ['required', 'string', 'max:20'],
+            'message' => ['nullable', 'string', 'max:1000'],
+            'doctor' => ['required', 'string', 'max:255'],
+            'time' => ['required', 'string', 'max:50'],
+        ]);
+
         $appointment = new Appointment;
-        $appointment->name=$req->name;
-        $appointment->email=$req->email;
-        $appointment->date=$req->date;
-        $appointment->phone=$req->phone;
-        $appointment->message=$req->message;
-        $appointment->doctor=$req->doctor;
+        $appointment->name=$validated['name'];
+        $appointment->email=$validated['email'];
+        $appointment->date=$validated['date'];
+        $appointment->phone=$validated['phone'];
+        $appointment->message=$validated['message'] ?? null;
+        $appointment->doctor=$validated['doctor'];
         $appointment->status='In Progress';
-        $appointment->time=$req->time;
+        $appointment->time=$validated['time'];
         if(Auth::id()){
             $appointment->user_id=Auth::user()->id;
         }
@@ -100,11 +104,15 @@ class HomeController extends Controller
     }
 }
     public function cancel_appoint($id) {
-        $appointment=appointment::find($id);
-        $status="In Progress";
-        $stat="canceled";
-        $appointment=appointment::where('status',$status)->delete();
-        $appointment=appointment::where('status',$stat)->delete();
+        if (!Auth::id()) {
+            return redirect('/login');
+        }
+
+        Appointment::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->whereIn('status', ['In Progress', 'canceled'])
+            ->delete();
+
         return redirect()->back();
         //$appointment->delete();
        
@@ -136,10 +144,12 @@ class HomeController extends Controller
     public function addTOCart(Request $req){
         $cart= new Cart;
         if(Auth::id()){
+           $validated = $req->validate([
+                'product_id' => ['required', 'integer', Rule::exists('pharmacies', 'id')],
+            ]);
           
-           $userid=Auth::user()->id;
-           $cart->user_id=$req->session()->get('user_id',$userid);
-           $cart->product_id=$req->product_id;
+           $cart->user_id=Auth::id();
+           $cart->product_id=$validated['product_id'];
            $cart->save();
            return redirect()->back();
           
@@ -151,18 +161,16 @@ class HomeController extends Controller
       }
      static function cartItem(){
           if(Auth::id()){
-        $userid=Auth::user()->id;
-          $userId=Session::get('user',$userid);
-          return Cart::where('user_id',$userId)->count();
+          return Cart::where('user_id', Auth::id())->count();
         }
+
+        return 0;
       }
      function cartList(){
         if(Auth::id()){
-            $userid=Auth::user()->id;
-              $userId=Session::get('user',$userid);
              $products=DB::table('carts')
               ->join('pharmacies','carts.product_id','=','pharmacies.id')
-              ->where('carts.user_id',$userId)
+              ->where('carts.user_id', Auth::id())
               ->select('pharmacies.*','carts.id as cart_id')
               ->get();
               return view('user.cartlist',['products'=>$products]);
@@ -175,11 +183,9 @@ class HomeController extends Controller
       public function buyNow()
       {
         if(Auth::id()){
-            $userid=Auth::user()->id;
-              $userId=Session::get('user',$userid);
-            $total= $products=DB::table('carts')
+            $total= DB::table('carts')
               ->join('pharmacies','carts.product_id','=','pharmacies.id')
-              ->where('carts.user_id',$userId)
+              ->where('carts.user_id', Auth::id())
              
               ->sum('pharmacies.price');
              return view('user.buynow',['total'=>$total]);
@@ -187,24 +193,31 @@ class HomeController extends Controller
       }
       function orderPlace(Request $req){
         if(Auth::id()){
-            $userid=Auth::user()->id;
-              $userId=Session::get('user',$userid);
-              $allcart=Cart::where('user_id',$userId)->get();
-             foreach($allcart as $cart){
-                $order=new Order;
-                $order->product_id=$cart['product_id'];
-                $order->user_id=$cart['user_id'];
-                $order->status="pending";
-                $order->payment_method=$req->payment;
-                $order->payment_status="pending";
-                $order->address=$req->address;
-                $order->bkash=$req->bkash;
-                $order->transaction_id=$req->transaction_id;
+            $validated = $req->validate([
+                'payment' => ['required', 'string', 'max:50'],
+                'address' => ['required', 'string', 'max:500'],
+                'bkash' => ['nullable', 'string', 'max:30'],
+                'transaction_id' => ['nullable', 'string', 'max:100'],
+            ]);
 
+            $allcart=Cart::where('user_id', Auth::id())->get();
 
-                $order->save();
-                Cart::where('user_id',$userId)->delete();
-             }
+            DB::transaction(function () use ($allcart, $validated) {
+                foreach($allcart as $cart){
+                    $order=new Order;
+                    $order->product_id=$cart['product_id'];
+                    $order->user_id=$cart['user_id'];
+                    $order->status="pending";
+                    $order->payment_method=$validated['payment'];
+                    $order->payment_status="pending";
+                    $order->address=$validated['address'];
+                    $order->bkash=$validated['bkash'] ?? null;
+                    $order->transaction_id=$validated['transaction_id'] ?? null;
+                    $order->save();
+                }
+
+                Cart::where('user_id', Auth::id())->delete();
+            });
             
             }
         $req->input();
@@ -212,11 +225,9 @@ class HomeController extends Controller
       }
       function myOrders(){
         if(Auth::id()){
-            $userid=Auth::user()->id;
-              $userId=Session::get('user',$userid);
              $orders= DB::table('orders')
               ->join('pharmacies','orders.product_id','=','pharmacies.id')
-              ->where('orders.user_id',$userId)
+              ->where('orders.user_id', Auth::id())
              // ->select('orders.*','orders.id as order_id')
              
               ->get();
@@ -224,10 +235,11 @@ class HomeController extends Controller
         }
       }
     function removeOrder($id){
-        $orders= DB::table('orders')
-        ->select('orders.*','orders.id as orders_id')
-          ->delete();   
-    return redirect('user.myorders',['orders'=>$orders]);
+        Order::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->delete();
+
+        return redirect('myorders');
     }
     function ambulance(){
         return view('user.ambulance');
@@ -403,4 +415,3 @@ class HomeController extends Controller
     }
 
     }
-

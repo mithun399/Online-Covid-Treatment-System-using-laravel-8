@@ -14,17 +14,26 @@ class Order extends Model
     public static function createFromCarts(Collection $carts, array $data): void
     {
         DB::transaction(function () use ($carts, $data) {
+            $now = now();
+            $records = [];
+
             foreach ($carts as $cart) {
-                $order = new self();
-                $order->product_id = $cart['product_id'];
-                $order->user_id = $cart['user_id'];
-                $order->status = 'pending';
-                $order->payment_method = $data['payment'];
-                $order->payment_status = 'pending';
-                $order->address = $data['address'];
-                $order->bkash = $data['bkash'] ?? null;
-                $order->transaction_id = $data['transaction_id'] ?? null;
-                $order->save();
+                $records[] = [
+                    'product_id' => $cart['product_id'],
+                    'user_id' => $cart['user_id'],
+                    'status' => 'pending',
+                    'payment_method' => $data['payment'],
+                    'payment_status' => 'pending',
+                    'address' => $data['address'],
+                    'bkash' => $data['bkash'] ?? null,
+                    'transaction_id' => $data['transaction_id'] ?? null,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
+            }
+
+            if (!empty($records)) {
+                self::insert($records);
             }
 
             if ($carts->isNotEmpty()) {

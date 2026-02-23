@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Models\User;
 
 use App\Models\Doctor;
@@ -28,7 +27,7 @@ use App\Models\Helpline;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Sample;
-use Crypt;
+use Illuminate\Support\Facades\Hash;
 
 
 class AdminController extends Controller
@@ -619,7 +618,7 @@ class AdminController extends Controller
         $org=new Organisation;
         $org->name=$req->name;
         $org->type=$req->type;
-        $org->address=$org->address;
+        $org->address=$req->address;
         $org->phone=$req->phone;
         $org->webaddress=$req->webaddress;
         $org->save();
@@ -705,7 +704,7 @@ class AdminController extends Controller
         $admin->phone=$req->phone;
         $admin->address=$req->address;
         $admin->usertype=$req->usertype;
-        $admin->password=Crypt::encrypt($req->password);
+        $admin->password=Hash::make($req->password);
         $admin->save();
         return redirect()->back()->with('message','Admin added Successfully');
     }

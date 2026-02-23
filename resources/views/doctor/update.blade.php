@@ -22,7 +22,7 @@
     <div class="container">
       <h1 class="text-center wow fadeInUp">Make an Appointment</h1>
 
-      <form class="main-form" method="POST" action="{{url('edit',$data->id)}}">
+      <form class="main-form" method="POST" action="{{url('doctor/edit',$data->id)}}">
         @csrf
         
          

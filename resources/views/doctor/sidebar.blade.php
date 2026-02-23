@@ -18,13 +18,13 @@
               </a>
             </li>-->
             <li>
-              <a href="{{url('add_appointment')}}" class="nav-link px-3 active">
+              <a href="{{url('doctor/add_appointment')}}" class="nav-link px-3 active">
                 <span class="me-2"><i class="mdi mdi-file-document-box"></i></span>
                 <span>Add Appointment</span>
               </a>
             </li>
             <li>
-              <a href="{{url('showappointment')}}" class="nav-link px-3 active">
+              <a href="{{url('doctor/showappointment')}}" class="nav-link px-3 active">
                 <span class="me-2"><i class="mdi mdi-file-document-box"></i></span>
                 <span>Appointments</span>
               </a>
@@ -32,13 +32,13 @@
            
 
             <li>
-              <a href="{{url('showdoctor')}}" class="nav-link px-3 active">
+              <a href="{{url('doctor/showdoctor')}}" class="nav-link px-3 active">
                 <span class="me-2"><i class="mdi mdi-file-document-box"></i></span>
                 <span>All Doctors</span>
               </a>
             </li>
             <li>
-              <a href="{{url('doctorpayment')}}" class="nav-link px-3 active">
+              <a href="{{url('doctor/doctorpayment')}}" class="nav-link px-3 active">
                 <span class="me-2"><i class="mdi mdi-file-document-box"></i></span>
                 <span>Doctor Payment</span>
               </a>

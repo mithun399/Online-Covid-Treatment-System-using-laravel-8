@@ -20,7 +20,7 @@
           </div>
         </div>
         <div class="container" align="center" style="padding-top:50px;">
-        <form action="{{url('editdoctor',$data->id)}}" method="POST" enctype="multipart/form-data">
+        <form action="{{url('doctor/editdoctor',$data->id)}}" method="POST" enctype="multipart/form-data">
           @csrf
         <div class="form-group">
     <label>Doctor Name</label>

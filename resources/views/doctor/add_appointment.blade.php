@@ -22,7 +22,7 @@
     <div class="container">
       <h1 class="text-center wow fadeInUp">Make an Appointment</h1>
 
-      <form class="main-form" method="POST" action="{{url('upload_appointment')}}">
+      <form class="main-form" method="POST" action="{{url('doctor/upload_appointment')}}">
         @csrf
         <div class="row mt-5 ">
           <div class="col-12 col-sm-6 py-2 wow fadeInLeft">

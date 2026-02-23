@@ -10,7 +10,7 @@
      <div class="container-fluid">
         <div class="row">
           <div class="col-md-12">
-            <a class="btn btn-primary" href="{{url('doctorpayment')}}">Go Back</a>
+            <a class="btn btn-primary" href="{{url('doctor/doctorpayment')}}">Go Back</a>
           </div>
           <div align="center" style="padding-top:10px;">
             <b style=" font-size: 40px;">Doctor Payment View</b>

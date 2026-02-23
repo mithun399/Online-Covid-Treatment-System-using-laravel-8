@@ -95,6 +95,7 @@ Route::get('/view/{id}',[HomeController::class,'view']);
 Route::get('/cancel_appoint/{id}',[HomeController::class,'cancel_appoint']);
 
 
+Route::middleware(['auth:sanctum', 'verified', 'admin'])->group(function () {
 Route::get('/add_doctor_view',[AdminController::class,'addDoctor']);
 Route::post('/upload_doctor',[AdminController::class,'upload']);
 Route::get('/showappointment',[AdminController::class,'showappointment']);
@@ -207,7 +208,8 @@ Route::get('/add_admin',[AdminController::class,'addAdmin']);
 Route::post('/upload_admin',[AdminController::class,'uploadAdmin']);
 Route::get('/medicinepayment',[AdminController::class,'medicinePayment']);
 Route::get('/drpayment',[AdminController::class,'drPayment']);
-Route::get('/sample',[AdminController::class,'sample']);
+Route::get('/admin/sample',[AdminController::class,'sample']);
+});
 
 
 
@@ -227,6 +229,7 @@ Route::get('/sample',[AdminController::class,'sample']);
 
 
 
+Route::middleware(['auth:sanctum', 'verified', 'doctor'])->prefix('doctor')->group(function () {
 Route::get('/showappointment',[DoctorController::class,'showappointment']);
 Route::get('/approved/{id}',[DoctorController::class,'approved']);
 Route::get('/canceled/{id}',[DoctorController::class,'canceled']);
@@ -235,13 +238,11 @@ Route::get('/updatedoctor/{id}',[DoctorController::class,'updatedoctor']);
 Route::post('/editdoctor/{id}',[DoctorController::class,'editdoctor']);
 Route::get('/showdoctor',[DoctorController::class,'showdoctor']);
 
-
-
 Route::get('/add_appointment',[DoctorController::class,'addAppointment']);
 Route::post('/upload_appointment',[DoctorController::class,'uploadAppoint']);
 Route::get('/update/{id}',[DoctorController::class,'update']);
 Route::post('/edit/{id}',[DoctorController::class,'edit']);
 
-
 Route::get('/doctorpayment',[DoctorController::class,'doctorPayment']);
 Route::get('/ddpayment/{id}',[DoctorController::class,'ddPayment']);
+});

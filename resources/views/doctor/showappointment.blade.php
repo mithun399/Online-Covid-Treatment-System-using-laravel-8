@@ -48,9 +48,9 @@
                     <td style="padding:10px;font-size: 20px;color:black">{{$show->status}}</td>
                     <td style="padding:10px;font-size: 20px;color:black">{{$show->time}}</td>
 
-                    <td><a class="btn btn-success" href="{{url('approved',$show->id)}}">Approved</a></td>
-                    <td><a class="btn btn-danger" href="{{url('canceled',$show->id)}}">Canceled</a></td>
-                    <td><a class="btn btn-primary" href="{{url('update',$show->id)}}">Edit</a></td>
+                    <td><a class="btn btn-success" href="{{url('doctor/approved',$show->id)}}">Approved</a></td>
+                    <td><a class="btn btn-danger" href="{{url('doctor/canceled',$show->id)}}">Canceled</a></td>
+                    <td><a class="btn btn-primary" href="{{url('doctor/update',$show->id)}}">Edit</a></td>
                     
 
                     

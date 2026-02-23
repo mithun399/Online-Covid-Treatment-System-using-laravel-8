@@ -146,7 +146,7 @@
           </div>
         </li>
         <li>
-              <a href="{{url('sample')}}" class="nav-link px-3 active">
+              <a href="{{url('admin/sample')}}" class="nav-link px-3 active">
                 <span class="me-2"><i class="mdi mdi-file-document-box"></i></span>
                 <span>Sample Collection</span>
               </a>

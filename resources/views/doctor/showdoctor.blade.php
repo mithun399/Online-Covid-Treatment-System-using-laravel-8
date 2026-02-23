@@ -44,8 +44,8 @@
                     <td style="padding:10px;font-size: 20px;color:black">{{$doctor->time}}</td>
                     <td style="padding:10px;font-size: 20px;color:black">{{$doctor->fee}}</td>
 
-                    <td><a class="btn btn-danger" onclick="return confirm('Are You Sure to Delte This?')" href="{{url('deletedoctor',$doctor->id)}}">Delete</a></td>
-                    <td><a class="btn btn-primary" href="{{url('updatedoctor',$doctor->id)}}">Edit</a></td>
+                    <td><a class="btn btn-danger" onclick="return confirm('Are You Sure to Delte This?')" href="{{url('doctor/deletedoctor',$doctor->id)}}">Delete</a></td>
+                    <td><a class="btn btn-primary" href="{{url('doctor/updatedoctor',$doctor->id)}}">Edit</a></td>
                 </tr>
                 @endforeach
 </table>

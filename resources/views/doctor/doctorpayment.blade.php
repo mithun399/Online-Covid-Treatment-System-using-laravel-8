@@ -33,7 +33,7 @@
                 </tr>
                 @foreach($doctorpayment as $dpayment)
                 <tr style="background-color:skyblue;" align="center">
-                <td style="padding:10px;font-size: 20px;color:black"><a href="{{url('ddpayment',$dpayment->id)}}">{{$dpayment->doctor}}</a></td>
+                <td style="padding:10px;font-size: 20px;color:black"><a href="{{url('doctor/ddpayment',$dpayment->id)}}">{{$dpayment->doctor}}</a></td>
                    <td style="padding:10px;font-size: 20px;color:black">{{$dpayment->created_at}}</td>
                     <!-- <td style="padding:10px;font-size: 20px;color:black">{{$dpayment->amount-10}}</td>
 
